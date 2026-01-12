@@ -1,0 +1,25 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ..:/workspaces:cached # Sincroniza tu código local con el contenedor
+    network_mode: service:db # Permite que la app vea a la DB en 'localhost'
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=usuario_dev
+      - POSTGRES_PASSWORD=password_dev
+      - POSTGRES_DB=mi_base_de_datos
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
