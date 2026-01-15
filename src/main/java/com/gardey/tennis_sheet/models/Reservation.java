@@ -22,12 +22,22 @@ public abstract class Reservation {
     @Column(name = "end_date_time", nullable = false)
     private Instant end;
 
+    @Column(name = "color_code", length = 100)
+    private String colorCode;
+
     protected Reservation() {}
 
     public Reservation(Court court, Instant start, Instant end) {
         this.court = court;
         this.start = start;
         this.end = end;
+    }
+
+    public Reservation(Court court, Instant start, Instant end, String colorCode) {
+        this.court = court;
+        this.start = start;
+        this.end = end;
+        this.colorCode = colorCode;
     }
 
     public Long getId() {
@@ -44,6 +54,10 @@ public abstract class Reservation {
 
     public Instant getEnd() {
         return end;
+    }
+
+    public String getColorCode() {
+        return colorCode;
     }
 
     public abstract String getDescription();

@@ -42,7 +42,7 @@ public class ReservationService {
         List<Reservation> reservations = reservationRepository.findByCourtIdAndStartBetween(courtId, startOfDay, endOfDay);
 
         return reservations.stream()
-            .map(r -> new CreateReservationResponseDTO(r.getId(), r.getStart(), Duration.between(r.getStart(), r.getEnd()).toMinutes(), r.getDescription()))
+            .map(r -> new CreateReservationResponseDTO(r.getId(), r.getStart(), Duration.between(r.getStart(), r.getEnd()).toMinutes(), r.getDescription(), r.getColorCode()))
             .collect(Collectors.toList());
     }
 }

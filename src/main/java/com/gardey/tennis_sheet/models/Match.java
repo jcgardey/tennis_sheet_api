@@ -26,6 +26,12 @@ public class Match extends Reservation {
         this.contactPhone = contactPhone;
     }
 
+    public Match(Court court, Instant start, Instant end, String playerName, String contactPhone, String colorCode) {
+        super(court, start, end, colorCode);
+        this.playerName = playerName;
+        this.contactPhone = contactPhone;
+    }
+
     public String getPlayerName() {
         return playerName;
     }

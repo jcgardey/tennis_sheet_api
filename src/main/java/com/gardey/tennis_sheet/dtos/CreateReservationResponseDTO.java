@@ -12,12 +12,15 @@ public class CreateReservationResponseDTO {
     private final long durationMinutes;
 
     private final String description;
+    
+    private final String colorCode;
 
-    public CreateReservationResponseDTO(Long id, Instant start, long durationMinutes, String description) {
+    public CreateReservationResponseDTO(Long id, Instant start, long durationMinutes, String description, String colorCode) {
         this.id = id;
         this.start = start;
         this.durationMinutes = durationMinutes;
         this.description = description;
+        this.colorCode = colorCode;
     }
 
     public Long getId() {
@@ -34,5 +37,9 @@ public class CreateReservationResponseDTO {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getColorCode() {
+        return colorCode;
     }
 }

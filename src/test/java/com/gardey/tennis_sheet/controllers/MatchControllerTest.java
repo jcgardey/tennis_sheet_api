@@ -37,7 +37,7 @@ class MatchControllerTest {
     void create_ShouldReturnCreated() throws Exception {
         Instant start = Instant.parse("2026-01-01T10:00:00.000Z");
         CreateMatchRequestDTO request = new CreateMatchRequestDTO(1L, start, 60, "Alice", "555");
-        CreateMatchResponseDTO response = new CreateMatchResponseDTO(1L, start, 60, "Alice", "555");
+        CreateMatchResponseDTO response = new CreateMatchResponseDTO(1L, start, 60, "Alice", "555", "primary-blue");
 
             when(matchService.createMatch(anyLong(), any(CreateMatchRequestDTO.class))).thenReturn(response);
 

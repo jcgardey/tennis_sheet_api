@@ -4,9 +4,11 @@ import com.gardey.tennis_sheet.dtos.CreateMatchRequestDTO;
 import com.gardey.tennis_sheet.dtos.CreateMatchResponseDTO;
 import com.gardey.tennis_sheet.exceptions.ReservationConflictException;
 import com.gardey.tennis_sheet.exceptions.ResourceNotFoundException;
+import com.gardey.tennis_sheet.models.AppConfiguration;
 import com.gardey.tennis_sheet.models.Court;
 import com.gardey.tennis_sheet.models.Match;
 import com.gardey.tennis_sheet.models.Reservation;
+import com.gardey.tennis_sheet.repositories.AppConfigurationRepository;
 import com.gardey.tennis_sheet.repositories.CourtRepository;
 import com.gardey.tennis_sheet.repositories.ReservationRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +35,9 @@ class MatchServiceTest {
 
     @Mock
     private CourtRepository courtRepository;
+
+    @Mock
+    private AppConfigurationRepository configurationRepository;
 
     @InjectMocks
     private MatchService matchService;
@@ -69,12 +74,13 @@ class MatchServiceTest {
     void createMatch_WhenValid_ShouldSaveAndReturnResponse() throws ReservationConflictException {
         when(courtRepository.existsById(1L)).thenReturn(true);
         when(reservationRepository.existsByCourtIdAndTimeRangeOverlap(anyLong(), any(Instant.class), any(Instant.class))).thenReturn(false);
+        when(configurationRepository.findValueByKey(AppConfiguration.ConfigurationKey.MATCH_DEFAULT_COLOR_CODE)).thenReturn(Optional.of("primary"));
 
         when(courtRepository.findById(1L)).thenReturn(Optional.of(court));
 
         Instant start = Instant.parse("2026-01-01T10:00:00Z");
         Instant end = start.plusSeconds(60 * 60);
-        Match saved = new Match(court, start, end, "Alice", "555");
+        Match saved = new Match(court, start, end, "Alice", "555", "primary");
 
         when(reservationRepository.save(any(Reservation.class))).thenReturn(saved);
 
@@ -86,6 +92,7 @@ class MatchServiceTest {
         assertThat(resp.getContactPhone()).isEqualTo("555");
         assertThat(resp.getStart()).isEqualTo("2026-01-01T10:00:00Z");
         assertThat(resp.getDurationMinutes()).isEqualTo(60);
+        assertThat(resp.getColorCode()).isEqualTo("primary");
 
         verify(reservationRepository, times(1)).save(any(Reservation.class));
     }

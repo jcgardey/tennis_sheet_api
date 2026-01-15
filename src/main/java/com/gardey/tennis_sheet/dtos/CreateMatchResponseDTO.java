@@ -9,13 +9,15 @@ public class CreateMatchResponseDTO  {
     private final long durationMinutes;
     private final String playerName;
     private final String contactPhone;
+    private final String colorCode;
 
-    public CreateMatchResponseDTO(Long id, Instant start, long durationMinutes, String playerName, String contactPhone) {
+    public CreateMatchResponseDTO(Long id, Instant start, long durationMinutes, String playerName, String contactPhone, String colorCode) {
         this.id = id;
         this.start = start;
         this.durationMinutes = durationMinutes;
         this.playerName = playerName;
         this.contactPhone = contactPhone;
+        this.colorCode = colorCode;
     }
 
     public String getPlayerName() {
@@ -36,5 +38,9 @@ public class CreateMatchResponseDTO  {
     
     public long getDurationMinutes() {
         return durationMinutes;
+    }
+
+    public String getColorCode() {
+        return colorCode;
     }
 }
