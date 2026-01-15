@@ -4,20 +4,27 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ..:/workspaces:cached # Sincroniza tu código local con el contenedor
-    network_mode: service:db # Permite que la app vea a la DB en 'localhost'
+      - ..:/workspaces:cached 
+    environment:
+      - DB_HOST=tennis_sheet_db
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PORT=5432
     depends_on:
-      - db
+      - tennis_sheet_db
+    ports:
+      - "${APP_PORT}:8080"
 
-  db:
+  tennis_sheet_db:
     image: postgres:15-alpine
     restart: unless-stopped
     environment:
-      - POSTGRES_USER=usuario_dev
-      - POSTGRES_PASSWORD=password_dev
-      - POSTGRES_DB=mi_base_de_datos
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 

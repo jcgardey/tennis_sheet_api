@@ -15,7 +15,7 @@ This repo contains the backend of Tennis Sheet, a web application designed to ma
 ## Technologies Used
 
 - **Backend**: Java, Spring Boot
-- **Database**: H2 (or check application.properties for actual DB)
+- **Database**: Postgres (or H2 for quick testing)
 - **Build Tool**: Maven
 - **Containerization**: Docker (via docker-compose.yml)
 - **Other**: Spring Security for authentication
@@ -39,6 +39,12 @@ This repo contains the backend of Tennis Sheet, a web application designed to ma
    mvn clean install
    ```
 
+4. **Create .env file with required variables**:
+   ```bash
+   mv .env.example .env
+   # complete the values
+   ```
+
 3. **Run with Maven**:
    ```bash
    mvn spring-boot:run
@@ -53,7 +59,3 @@ This repo contains the backend of Tennis Sheet, a web application designed to ma
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Contact
-
-For questions or support, please contact [your-email@example.com].
