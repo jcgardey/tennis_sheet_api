@@ -1,7 +1,7 @@
 package com.gardey.tennis_sheet.controllers;
 
 import com.gardey.tennis_sheet.dtos.CreatePersonRequestDTO;
-import com.gardey.tennis_sheet.dtos.CreatePersonResponseDTO;
+import com.gardey.tennis_sheet.dtos.PersonDTO;
 import com.gardey.tennis_sheet.services.PersonService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +20,14 @@ public class PersonController {
     }
 
     @PostMapping
-    public ResponseEntity<CreatePersonResponseDTO> createPerson(@RequestBody CreatePersonRequestDTO request) {
-        CreatePersonResponseDTO response = personService.createPerson(request);
+    public ResponseEntity<PersonDTO> createPerson(@RequestBody CreatePersonRequestDTO request) {
+        PersonDTO response = personService.createPerson(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<CreatePersonResponseDTO>> getAllPersons(@RequestParam(required = false) String name) {
-        List<CreatePersonResponseDTO> persons;
+    public ResponseEntity<List<PersonDTO>> getAllPersons(@RequestParam(required = false) String name) {
+        List<PersonDTO> persons;
         if (name != null && !name.trim().isEmpty()) {
             persons = personService.searchPersonsByName(name.trim());
         } else {
@@ -37,8 +37,8 @@ public class PersonController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CreatePersonResponseDTO> getPersonById(@PathVariable Long id) {
-        CreatePersonResponseDTO response = personService.getPersonById(id);
+    public ResponseEntity<PersonDTO> getPersonById(@PathVariable Long id) {
+        PersonDTO response = personService.getPersonById(id);
         return ResponseEntity.ok(response);
     }
 

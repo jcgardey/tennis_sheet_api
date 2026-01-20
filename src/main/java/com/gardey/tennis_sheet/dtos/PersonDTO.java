@@ -1,12 +1,12 @@
 package com.gardey.tennis_sheet.dtos;
 
-public class CreatePersonResponseDTO {
+public class PersonDTO {
     private final Long id;
     private final String name;
     private final String email;
     private final String phone;
 
-    public CreatePersonResponseDTO(Long id, String name, String email, String phone) {
+    public PersonDTO(Long id, String name, String email, String phone) {
         this.id = id;
         this.name = name;
         this.email = email;

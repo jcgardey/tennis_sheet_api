@@ -1,7 +1,7 @@
 package com.gardey.tennis_sheet.services;
 
 import com.gardey.tennis_sheet.dtos.CreatePersonRequestDTO;
-import com.gardey.tennis_sheet.dtos.CreatePersonResponseDTO;
+import com.gardey.tennis_sheet.dtos.PersonDTO;
 import com.gardey.tennis_sheet.exceptions.ResourceNotFoundException;
 import com.gardey.tennis_sheet.models.Person;
 import com.gardey.tennis_sheet.repositories.PersonRepository;
@@ -35,7 +35,7 @@ class PersonServiceTest {
         
         when(personRepository.save(any(Person.class))).thenReturn(savedPerson);
 
-        CreatePersonResponseDTO result = personService.createPerson(request);
+        PersonDTO result = personService.createPerson(request);
 
         assertThat(result.getId()).isEqualTo(1L);
         assertThat(result.getName()).isEqualTo("John Doe");
@@ -53,7 +53,7 @@ class PersonServiceTest {
 
         when(personRepository.findAll()).thenReturn(persons);
 
-        List<CreatePersonResponseDTO> result = personService.getAllPersons();
+        List<PersonDTO> result = personService.getAllPersons();
 
         assertThat(result).hasSize(2);
         assertThat(result.get(0).getName()).isEqualTo("John Doe");
@@ -66,7 +66,7 @@ class PersonServiceTest {
         Person person = new Person(1L, "John Doe", "john@example.com", "+1234567890");
         when(personRepository.findById(1L)).thenReturn(Optional.of(person));
 
-        CreatePersonResponseDTO result = personService.getPersonById(1L);
+        PersonDTO result = personService.getPersonById(1L);
 
         assertThat(result.getId()).isEqualTo(1L);
         assertThat(result.getName()).isEqualTo("John Doe");
@@ -91,7 +91,7 @@ class PersonServiceTest {
 
         when(personRepository.findByNameContainingIgnoreCase("John")).thenReturn(persons);
 
-        List<CreatePersonResponseDTO> result = personService.searchPersonsByName("John");
+        List<PersonDTO> result = personService.searchPersonsByName("John");
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getName()).isEqualTo("John Doe");

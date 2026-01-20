@@ -15,6 +15,11 @@ public class Court {
     
     protected Court() {}
 
+    public Court(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public Court(String name) {
         this.name = name;
     }

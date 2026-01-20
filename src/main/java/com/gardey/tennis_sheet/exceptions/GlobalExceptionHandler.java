@@ -25,4 +25,10 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleReservationConflict(ReservationConflictException ex) {
         return new ErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
+
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleValidationError(ValidationException ex) {
+        return new ErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
 }

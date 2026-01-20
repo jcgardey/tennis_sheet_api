@@ -2,7 +2,7 @@ package com.gardey.tennis_sheet.controllers;
 
 import tools.jackson.databind.ObjectMapper;
 import com.gardey.tennis_sheet.dtos.CreatePersonRequestDTO;
-import com.gardey.tennis_sheet.dtos.CreatePersonResponseDTO;
+import com.gardey.tennis_sheet.dtos.PersonDTO;
 import com.gardey.tennis_sheet.exceptions.ResourceNotFoundException;
 import com.gardey.tennis_sheet.services.PersonService;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ class PersonControllerTest {
     @Test
     void createPerson_ShouldReturnCreated() throws Exception {
         CreatePersonRequestDTO request = new CreatePersonRequestDTO("John Doe", "john@example.com", "+1234567890");
-        CreatePersonResponseDTO response = new CreatePersonResponseDTO(1L, "John Doe", "john@example.com", "+1234567890");
+        PersonDTO response = new PersonDTO(1L, "John Doe", "john@example.com", "+1234567890");
         
         when(personService.createPerson(any(CreatePersonRequestDTO.class))).thenReturn(response);
         
@@ -51,9 +51,9 @@ class PersonControllerTest {
 
     @Test
     void getAllPersons_ShouldReturnList() throws Exception {
-        List<CreatePersonResponseDTO> persons = List.of(
-                new CreatePersonResponseDTO(1L, "John Doe", "john@example.com", "+1234567890"),
-                new CreatePersonResponseDTO(2L, "Jane Smith", "jane@example.com", "+0987654321")
+        List<PersonDTO> persons = List.of(
+                new PersonDTO(1L, "John Doe", "john@example.com", "+1234567890"),
+                new PersonDTO(2L, "Jane Smith", "jane@example.com", "+0987654321")
         );
         
         when(personService.getAllPersons()).thenReturn(persons);
@@ -67,7 +67,7 @@ class PersonControllerTest {
 
     @Test
     void getPersonById_ShouldReturnPerson() throws Exception {
-        CreatePersonResponseDTO response = new CreatePersonResponseDTO(1L, "John Doe", "john@example.com", "+1234567890");
+        PersonDTO response = new PersonDTO(1L, "John Doe", "john@example.com", "+1234567890");
         
         when(personService.getPersonById(1L)).thenReturn(response);
         
