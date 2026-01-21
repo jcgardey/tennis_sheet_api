@@ -36,30 +36,30 @@ public class Reservation {
     @JoinTable(
         name = "reservation_players",
         joinColumns = @JoinColumn(name = "reservation_id"),
-        inverseJoinColumns = @JoinColumn(name = "person_id")
+        inverseJoinColumns = @JoinColumn(name = "player_profile_id")
     )
-    private List<Person> players;
+    private List<PlayerProfile> players;
 
     @ManyToOne
-    @JoinColumn(name = "coach_id")
-    private Person coach;
+    @JoinColumn(name = "coach_profile_id")
+    private CoachProfile coachProfile;
 
     protected Reservation() {}
 
-    public Reservation(Court court, Instant start, Instant end, ReservationType type, String description, List<Person> players, Person coach, String colorCode) {
+    public Reservation(Court court, Instant start, Instant end, ReservationType type, String description, List<PlayerProfile> players, CoachProfile coachProfile, String colorCode) {
         this.court = court;
         this.start = start;
         this.end = end;
         this.type = type;
         this.description = description;
         this.players = players;
-        this.coach = coach;
+        this.coachProfile = coachProfile;
         this.colorCode = colorCode;
     }
 
-    public Reservation(Long id, Court court, Instant start, Instant end, ReservationType type, String description, List<Person> players, Person coach, String colorCode) {
+    public Reservation(Long id, Court court, Instant start, Instant end, ReservationType type, String description, List<PlayerProfile> players, CoachProfile coachProfile, String colorCode) {
         this.id = id;
-        this(court, start, end, type, description, players, coach, colorCode);
+        this(court, start, end, type, description, players, coachProfile, colorCode);
     }
 
     public Long getId() {
@@ -90,23 +90,23 @@ public class Reservation {
         return description;
     }
 
-    public List<Person> getPlayers() {
+    public List<PlayerProfile> getPlayers() {
         return players;
     }
 
-    public Person getCoach() {
-        return coach;
+    public CoachProfile getCoachProfile() {
+        return coachProfile;
     }
 
     public void setDescription(String description) {
         this.description = description;
     }
 
-    public void setPlayers(List<Person> players) {
+    public void setPlayers(List<PlayerProfile> players) {
         this.players = players;
     }
 
-    public void setCoach(Person coach) {
-        this.coach = coach;
+    public void setCoachProfile(CoachProfile coachProfile) {
+        this.coachProfile = coachProfile;
     }
 }

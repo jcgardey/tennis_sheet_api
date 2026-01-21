@@ -7,10 +7,7 @@ import com.gardey.tennis_sheet.exceptions.ReservationConflictException;
 import com.gardey.tennis_sheet.exceptions.ResourceNotFoundException;
 import com.gardey.tennis_sheet.exceptions.ValidationException;
 import com.gardey.tennis_sheet.models.*;
-import com.gardey.tennis_sheet.repositories.AppConfigurationRepository;
-import com.gardey.tennis_sheet.repositories.CourtRepository;
-import com.gardey.tennis_sheet.repositories.PersonRepository;
-import com.gardey.tennis_sheet.repositories.ReservationRepository;
+import com.gardey.tennis_sheet.repositories.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,15 +25,18 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final CourtRepository courtRepository;
-    private final PersonRepository personRepository;
     private final AppConfigurationRepository configurationRepository;
+    private final PlayerProfileRepository playerProfileRepository;
+    private final CoachProfileRepository coachProfileRepository;
 
     public ReservationService(ReservationRepository reservationRepository, CourtRepository courtRepository, 
-                             PersonRepository personRepository, AppConfigurationRepository configurationRepository) {
+                             PersonRepository personRepository, AppConfigurationRepository configurationRepository,
+                             PlayerProfileRepository playerProfileRepository, CoachProfileRepository coachProfileRepository) {
         this.reservationRepository = reservationRepository;
         this.courtRepository = courtRepository;
-        this.personRepository = personRepository;
         this.configurationRepository = configurationRepository;
+        this.playerProfileRepository = playerProfileRepository;
+        this.coachProfileRepository = coachProfileRepository;
     }
 
     @Transactional
@@ -56,13 +56,13 @@ public class ReservationService {
         }
 
         Court court = courtRepository.findById(courtId).get();
-        List<Person> players = getPlayersById(request.getPlayerIds());
-        Person coach = request.getCoachId() != null ? getPersonById(request.getCoachId()) : null;
+        List<PlayerProfile> playerProfiles = getPlayerProfilesByPersonId(request.getPlayerIds());
+        CoachProfile coachProfile = request.getCoachId() != null ? getCoachProfileByPersonId(request.getCoachId()) : null;
         
         String colorCode = configurationRepository.findValueByKey(AppConfiguration.ConfigurationKey.MATCH_DEFAULT_COLOR_CODE).orElse(null);
         
         Reservation reservation = new Reservation(court, request.getStart(), end, request.getType(), 
-                                                 request.getDescription(), players, coach, colorCode);
+                                                 request.getDescription(), playerProfiles, coachProfile, colorCode);
         
         Reservation saved = reservationRepository.save(reservation);
         return mapToResponseDTO(saved);
@@ -117,33 +117,36 @@ public class ReservationService {
         }
     }
 
-    private List<Person> getPlayersById(List<Long> playerIds) {
+    private List<PlayerProfile> getPlayerProfilesByPersonId(List<Long> playerIds) {
         if (playerIds == null || playerIds.isEmpty()) {
             return List.of();
         }
         
-        List<Person> players = personRepository.findAllById(playerIds);
-        if (players.size() != playerIds.size()) {
+        List<PlayerProfile> playerProfiles = playerIds.stream()
+                .map(id -> playerProfileRepository.findByPersonId(id).orElse(null))
+                .filter(p -> p != null)
+                .collect(Collectors.toList());
+        if (playerProfiles.size() != playerIds.size()) {
             throw new ResourceNotFoundException("One or more players not found");
         }
         
-        return players;
+        return playerProfiles;
     }
 
-    private Person getPersonById(Long id) {
-        return personRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Person not found with id: " + id));
+    private CoachProfile getCoachProfileByPersonId(Long id) {
+        return coachProfileRepository.findByPersonId(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Coach profile not found with id: " + id));
     }
 
     private ReservationDTO mapToResponseDTO(Reservation reservation) {
         List<PersonDTO> players = reservation.getPlayers() != null ? 
             reservation.getPlayers().stream()
-                .map(p -> new PersonDTO(p.getId(), p.getName(), p.getEmail(), p.getPhone()))
+                .map(p -> new PersonDTO(p.getPerson().getId(), p.getPerson().getName(), p.getPerson().getEmail(), p.getPerson().getPhone()))
                 .collect(Collectors.toList()) : List.of();
         
-        PersonDTO coach = reservation.getCoach() != null ?
-            new PersonDTO(reservation.getCoach().getId(), reservation.getCoach().getName(),
-                                      reservation.getCoach().getEmail(), reservation.getCoach().getPhone()) : null;
+        PersonDTO coach = reservation.getCoachProfile() != null ?
+            new PersonDTO(reservation.getCoachProfile().getPerson().getId(), reservation.getCoachProfile().getPerson().getName(),
+                                      reservation.getCoachProfile().getPerson().getEmail(), reservation.getCoachProfile().getPerson().getPhone()) : null;
         
         long duration = Duration.between(reservation.getStart(), reservation.getEnd()).toMinutes();
         

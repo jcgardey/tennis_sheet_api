@@ -6,10 +6,7 @@ import com.gardey.tennis_sheet.exceptions.ReservationConflictException;
 import com.gardey.tennis_sheet.exceptions.ValidationException;
 import com.gardey.tennis_sheet.exceptions.ResourceNotFoundException;
 import com.gardey.tennis_sheet.models.*;
-import com.gardey.tennis_sheet.repositories.AppConfigurationRepository;
-import com.gardey.tennis_sheet.repositories.CourtRepository;
-import com.gardey.tennis_sheet.repositories.PersonRepository;
-import com.gardey.tennis_sheet.repositories.ReservationRepository;
+import com.gardey.tennis_sheet.repositories.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,7 +35,10 @@ class ReservationServiceTest {
     private CourtRepository courtRepository;
 
     @Mock
-    private PersonRepository personRepository;
+    private PlayerProfileRepository playerProfileRepository;
+
+    @Mock
+    private CoachProfileRepository coachProfileRepository;
 
     @Mock
     private AppConfigurationRepository configurationRepository;
@@ -49,12 +49,16 @@ class ReservationServiceTest {
     private Court court;
     private Person player1;
     private Person coach;
+    private PlayerProfile playerProfile1;
+    private CoachProfile coachProfile;
 
     @BeforeEach
     void setUp() {
         court = new Court(1L, "Center Court");
         player1 = new Person(1L, "John Doe", "john@example.com", "+1234567890");
         coach = new Person(3L, "Coach Mike", "mike@example.com", "+5555555555");
+        playerProfile1 = new PlayerProfile(player1);
+        coachProfile = new CoachProfile(coach);
     }
 
     @Test
@@ -153,8 +157,8 @@ class ReservationServiceTest {
 
         when(courtRepository.existsById(1L)).thenReturn(true);
         when(courtRepository.findById(1L)).thenReturn(Optional.of(court));
-        when(personRepository.findAllById(List.of(1L))).thenReturn(List.of(player1));
-        when(personRepository.findById(3L)).thenReturn(Optional.of(coach));
+        when(playerProfileRepository.findByPersonId(1L)).thenReturn(Optional.of(playerProfile1));
+        when(coachProfileRepository.findByPersonId(3L)).thenReturn(Optional.of(coachProfile));
         when(reservationRepository.existsByCourtIdAndTimeRangeOverlap(any(), any(), any())).thenReturn(false);
         when(configurationRepository.findValueByKey(AppConfiguration.ConfigurationKey.MATCH_DEFAULT_COLOR_CODE))
                 .thenReturn(Optional.of("#FF0000"));
@@ -166,8 +170,8 @@ class ReservationServiceTest {
                 request.getStart().plusSeconds(request.getDurationMinutes() * 60),
                 request.getType(),
                 request.getDescription(),
-                List.of(player1),
-                coach,
+                List.of(playerProfile1),
+                coachProfile,
                 "#FF0000"
         );
         when(reservationRepository.save(any(Reservation.class))).thenReturn(savedReservation);
