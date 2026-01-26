@@ -3,7 +3,9 @@ package com.gardey.tennis_sheet.controllers;
 import tools.jackson.databind.ObjectMapper;
 import com.gardey.tennis_sheet.dtos.CreatePersonRequestDTO;
 import com.gardey.tennis_sheet.dtos.PersonDTO;
+import com.gardey.tennis_sheet.exceptions.PersonEmailAlreadyExistsException;
 import com.gardey.tennis_sheet.exceptions.ResourceNotFoundException;
+import com.gardey.tennis_sheet.models.ProfileType;
 import com.gardey.tennis_sheet.services.PersonService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +36,7 @@ class PersonControllerTest {
 
     @Test
     void createPerson_ShouldReturnCreated() throws Exception {
-        CreatePersonRequestDTO request = new CreatePersonRequestDTO("John Doe", "john@example.com", "+1234567890");
+        CreatePersonRequestDTO request = new CreatePersonRequestDTO("John Doe", "john@example.com", "+1234567890", false, null, null);
         PersonDTO response = new PersonDTO(1L, "John Doe", "john@example.com", "+1234567890");
         
         when(personService.createPerson(any(CreatePersonRequestDTO.class))).thenReturn(response);
@@ -50,13 +52,25 @@ class PersonControllerTest {
     }
 
     @Test
+    void createPerson_WhenEmailExists_ShouldReturnBadRequest() throws Exception {
+        CreatePersonRequestDTO request = new CreatePersonRequestDTO("", "invalid@email.com", "123", false, null, null);
+        when(personService.createPerson(any(CreatePersonRequestDTO.class)))
+        .thenThrow(new PersonEmailAlreadyExistsException("invalid@email.com"));
+        mockMvc.perform(post("/api/persons")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Email already exists: " + request.getEmail()));
+    }
+
+    @Test
     void getAllPersons_ShouldReturnList() throws Exception {
         List<PersonDTO> persons = List.of(
                 new PersonDTO(1L, "John Doe", "john@example.com", "+1234567890"),
                 new PersonDTO(2L, "Jane Smith", "jane@example.com", "+0987654321")
         );
         
-        when(personService.getAllPersons()).thenReturn(persons);
+        when(personService.getAllPersonsByProfileAndName(ProfileType.PLAYER, "")).thenReturn(persons);
         
         mockMvc.perform(get("/api/persons"))
                 .andExpect(status().isOk())

@@ -31,4 +31,10 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleValidationError(ValidationException ex) {
         return new ErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
+
+    @ExceptionHandler(PersonEmailAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlePersonEmailAlreadyExists(PersonEmailAlreadyExistsException ex) {
+        return new ErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
 }

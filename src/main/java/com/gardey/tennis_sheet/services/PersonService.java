@@ -2,9 +2,14 @@ package com.gardey.tennis_sheet.services;
 
 import com.gardey.tennis_sheet.dtos.CreatePersonRequestDTO;
 import com.gardey.tennis_sheet.dtos.PersonDTO;
+import com.gardey.tennis_sheet.exceptions.PersonEmailAlreadyExistsException;
 import com.gardey.tennis_sheet.exceptions.ResourceNotFoundException;
+import com.gardey.tennis_sheet.models.CoachProfile;
 import com.gardey.tennis_sheet.models.Person;
+import com.gardey.tennis_sheet.models.PlayerProfile;
+import com.gardey.tennis_sheet.models.ProfileType;
 import com.gardey.tennis_sheet.repositories.PersonRepository;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,16 +27,18 @@ public class PersonService {
 
     @Transactional
     public PersonDTO createPerson(CreatePersonRequestDTO request) {
+        Person existingPerson = personRepository.findByEmailIgnoreCase(request.getEmail())
+                .orElse(null);
+        if (existingPerson != null) {
+            throw new PersonEmailAlreadyExistsException(request.getEmail());
+        }
         Person person = new Person(request.getName(), request.getEmail(), request.getPhone());
+        person.setPlayerProfile(new PlayerProfile(person));
+        if (request.isCoach()) {
+            person.setCoachProfile(new CoachProfile(person, request.getColorCode(), request.getHourlyRate()));
+        }
         Person saved = personRepository.save(person);
         return mapToResponseDTO(saved);
-    }
-
-    @Transactional(readOnly = true)
-    public List<PersonDTO> getAllPersons() {
-        return personRepository.findAll().stream()
-                .map(this::mapToResponseDTO)
-                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -42,8 +49,11 @@ public class PersonService {
     }
 
     @Transactional(readOnly = true)
-    public List<PersonDTO> searchPersonsByName(String name) {
-        return personRepository.findByNameContainingIgnoreCase(name).stream()
+    public List<PersonDTO> getAllPersonsByProfileAndName(ProfileType profile, String name) {
+        List <Person> persons = profile == ProfileType.COACH ?
+                personRepository.findAllCoachesByName(name) :
+                personRepository.findAllPlayersByName(name);
+        return persons.stream()
                 .map(this::mapToResponseDTO)
                 .collect(Collectors.toList());
     }

@@ -14,7 +14,7 @@ public class PlayerProfile {
     @JoinColumn(name = "person_id", nullable = false, unique = true)
     private Person person;
 
-    protected PlayerProfile() {}
+    public PlayerProfile() {}
 
     public PlayerProfile(Person person) {
         this.person = person;

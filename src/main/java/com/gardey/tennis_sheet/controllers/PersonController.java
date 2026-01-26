@@ -2,6 +2,7 @@ package com.gardey.tennis_sheet.controllers;
 
 import com.gardey.tennis_sheet.dtos.CreatePersonRequestDTO;
 import com.gardey.tennis_sheet.dtos.PersonDTO;
+import com.gardey.tennis_sheet.models.ProfileType;
 import com.gardey.tennis_sheet.services.PersonService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,13 +27,13 @@ public class PersonController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PersonDTO>> getAllPersons(@RequestParam(required = false) String name) {
+    public ResponseEntity<List<PersonDTO>> getAllPersons(
+        @RequestParam(required = false, defaultValue = "PLAYER") ProfileType profile,
+        @RequestParam(required = false, defaultValue = "") String name) {
         List<PersonDTO> persons;
-        if (name != null && !name.trim().isEmpty()) {
-            persons = personService.searchPersonsByName(name.trim());
-        } else {
-            persons = personService.getAllPersons();
-        }
+        
+        persons = personService.getAllPersonsByProfileAndName(profile, name.trim());
+       
         return ResponseEntity.ok(persons);
     }
 

@@ -19,19 +19,23 @@ public class Person {
     @Column(name = "phone", length = 20)
     private String phone;
 
+    @OneToOne(mappedBy = "person", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private PlayerProfile playerProfile;
+    
+    @OneToOne(mappedBy = "person", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private CoachProfile coachProfile;
+
     protected Person() {}
 
-    public Person(Long id, String name, String email, String phone) {
-        this.id = id;
+     public Person(String name, String email, String phone) {
         this.name = name;
         this.email = email;
         this.phone = phone;
     }
 
-    public Person(String name, String email, String phone) {
-        this.name = name;
-        this.email = email;
-        this.phone = phone;
+    public Person(Long id, String name, String email, String phone) {
+        this.id = id;
+        this(name, email, phone);
     }
 
     public Long getId() {
@@ -48,5 +52,17 @@ public class Person {
 
     public String getPhone() {
         return phone;
+    }
+
+    public PlayerProfile getPlayerProfile() {
+        return playerProfile;
+    }
+
+    public void setPlayerProfile(PlayerProfile playerProfile) {
+        this.playerProfile = playerProfile;
+    }
+
+    public void setCoachProfile(CoachProfile coachProfile) {
+        this.coachProfile = coachProfile;
     }
 }

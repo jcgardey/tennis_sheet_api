@@ -1,3 +1,4 @@
+### Create a court
 POST http://localhost:8080/api/courts HTTP/1.1
 content-type: application/json
 
@@ -19,3 +20,28 @@ Content-Type: application/json
 
 ### Get reservations 
 GET http://localhost:8080/api/courts/1/reservations?date=2026-01-15 HTTP/1.1
+
+### Create a person (player)
+POST http://localhost:8080/api/persons HTTP/1.1
+Content-Type: application/json  
+
+{
+    "name": "Terry Howard",
+    "email": "terry@example.com",
+    "phone": "+123434333890"
+}
+
+### Create a person (coach)
+POST http://localhost:8080/api/persons HTTP/1.1
+Content-Type: application/json  
+
+{
+    "name": "Brad Gilbert",
+    "email": "brad@example.com",
+    "phone": "+123433333890",
+    "isCoach": true,
+    "hourlyRate": 8000
+}
+
+### Search persons by profile and name
+GET http://localhost:8080/api/persons?profile=COACH HTTP/1.1
