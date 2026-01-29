@@ -83,10 +83,10 @@ class ReservationServiceTest {
         Reservation savedReservation = new Reservation(
                 1L,
                 court,
-                request.getStart(),
-                request.getStart().plusSeconds(request.getDurationMinutes() * 60),
-                request.getType(),
-                request.getDescription(),
+                request.start(),
+                request.start().plusSeconds(request.durationMinutes() * 60),
+                request.type(),
+                request.description(),
                 List.of(),
                 null,
                 "#FF0000"
@@ -95,10 +95,10 @@ class ReservationServiceTest {
 
         ReservationDTO result = reservationService.createReservation(1L, request);
 
-        assertThat(result.getType()).isEqualTo(ReservationType.MATCH);
-        assertThat(result.getDescription()).isEqualTo("Singles practice");
-        assertThat(result.getPlayers()).isEmpty();
-        assertThat(result.getCoach()).isNull();
+        assertThat(result.type()).isEqualTo(ReservationType.MATCH);
+        assertThat(result.description()).isEqualTo("Singles practice");
+        assertThat(result.players()).isEmpty();
+        assertThat(result.coach()).isNull();
         verify(reservationRepository).save(any(Reservation.class));
     }
 
@@ -166,10 +166,10 @@ class ReservationServiceTest {
         Reservation savedReservation = new Reservation(
                 1L,
                 court,
-                request.getStart(),
-                request.getStart().plusSeconds(request.getDurationMinutes() * 60),
-                request.getType(),
-                request.getDescription(),
+                request.start(),
+                request.start().plusSeconds(request.durationMinutes() * 60),
+                request.type(),
+                request.description(),
                 List.of(playerProfile1),
                 coachProfile,
                 "#FF0000"
@@ -178,11 +178,11 @@ class ReservationServiceTest {
 
         ReservationDTO result = reservationService.createReservation(1L, request);
 
-        assertThat(result.getType()).isEqualTo(ReservationType.LESSON);
-        assertThat(result.getDescription()).isEqualTo("Beginner lesson");
-        assertThat(result.getPlayers()).hasSize(1);
-        assertThat(result.getCoach()).isNotNull();
-        assertThat(result.getCoach().getName()).isEqualTo("Coach Mike");
+        assertThat(result.type()).isEqualTo(ReservationType.LESSON);
+        assertThat(result.description()).isEqualTo("Beginner lesson");
+        assertThat(result.players()).hasSize(1);
+        assertThat(result.coach()).isNotNull();
+        assertThat(result.coach().name()).isEqualTo("Coach Mike");
         verify(reservationRepository).save(any(Reservation.class));
     }
 
@@ -279,9 +279,9 @@ class ReservationServiceTest {
 
         // Then
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getId()).isEqualTo(1L);
-        assertThat(result.get(0).getType()).isEqualTo(ReservationType.MATCH);
-        assertThat(result.get(0).getDescription()).isEqualTo("Test match");
+        assertThat(result.get(0).id()).isEqualTo(1L);
+        assertThat(result.get(0).type()).isEqualTo(ReservationType.MATCH);
+        assertThat(result.get(0).description()).isEqualTo("Test match");
     }
 
 }

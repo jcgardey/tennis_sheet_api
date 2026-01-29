@@ -12,7 +12,7 @@ Quick facts
 
 Architecture / patterns to follow
 - Layered design: Controller -> Service -> Repository (Spring Data JPA) -> Model. See `controllers/CourtController.java`, `services/CourtService.java`, `repositories/CourtRepository.java`, `models/Court.java`.
-- DTOs: immutable DTOs with constructor-based fields (example: `dtos/CreateCourtRequestDTO.java`, `dtos/CreateCourtResponseDTO.java`). Match JSON -> constructor mapping when adding new DTOs.
+- DTOs: Java Records (example: `dtos/CreateCourtRequestDTO.java`, `dtos/CreateCourtResponseDTO.java`). Match JSON -> constructor mapping when adding new DTOs.
 - Exception handling: application-wide handler in `exceptions/GlobalExceptionHandler.java` returns `ErrorResponse` for domain errors (e.g., `CourtNameAlreadyExistsException`). Use that pattern for new domain errors.
 - Database schema is managed by Flyway. Do not rely on `hibernate.ddl-auto` (it's set to `none`). Add migrations to `src/main/resources/db/migration` for schema changes.
 

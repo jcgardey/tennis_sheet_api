@@ -30,11 +30,11 @@ public class CourtService {
 
     @Transactional
     public CreateCourtResponseDTO createCourt(CreateCourtRequestDTO request) throws CourtNameAlreadyExistsException {
-        if (courtRepository.existsByName(request.getName())) {
-            throw new CourtNameAlreadyExistsException(request.getName());
+        if (courtRepository.existsByName(request.name())) {
+            throw new CourtNameAlreadyExistsException(request.name());
         }
-        
-        Court court = new Court(request.getName());
+
+        Court court = new Court(request.name());
         Court savedCourt = courtRepository.save(court);
 
         return new CreateCourtResponseDTO(savedCourt.getId(), savedCourt.getName());

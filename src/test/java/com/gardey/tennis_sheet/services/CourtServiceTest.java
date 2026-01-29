@@ -43,7 +43,7 @@ class CourtServiceTest {
         List<CreateCourtResponseDTO> result = courtService.getAllCourts();
 
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getName()).isEqualTo("Center Court");
+        assertThat(result.get(0).name()).isEqualTo("Center Court");
         verify(courtRepository, times(1)).findAll();
     }
 
@@ -66,7 +66,7 @@ class CourtServiceTest {
         when(courtRepository.save(any(Court.class))).thenReturn(new Court("New Court"));
 
         CreateCourtResponseDTO result = courtService.createCourt(request);
-        assertThat(result.getName()).isEqualTo("New Court");
+        assertThat(result.name()).isEqualTo("New Court");
         verify(courtRepository, times(1)).save(any());
     }
 

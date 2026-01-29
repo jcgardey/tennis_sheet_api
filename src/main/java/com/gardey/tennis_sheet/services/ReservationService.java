@@ -44,25 +44,25 @@ public class ReservationService {
 
         validateBasicReservationData(courtId, request);
         
-        if (request.getType() == ReservationType.MATCH) {
+        if (request.type() == ReservationType.MATCH) {
             validateMatchRules(request);
-        } else if (request.getType() == ReservationType.LESSON) {
+        } else if (request.type() == ReservationType.LESSON) {
             validateLessonRules(request);
         }
         
-        Instant end = request.getStart().plus(request.getDurationMinutes(), ChronoUnit.MINUTES);
-        if (reservationRepository.existsByCourtIdAndTimeRangeOverlap(courtId, request.getStart(), end)) {
-            throw new ReservationConflictException(courtId, request.getStart().toString());
+        Instant end = request.start().plus(request.durationMinutes(), ChronoUnit.MINUTES);
+        if (reservationRepository.existsByCourtIdAndTimeRangeOverlap(courtId, request.start(), end)) {
+            throw new ReservationConflictException(courtId, request.start().toString());
         }
 
         Court court = courtRepository.findById(courtId).get();
-        List<PlayerProfile> playerProfiles = getPlayerProfilesByPersonId(request.getPlayerIds());
-        CoachProfile coachProfile = request.getCoachId() != null ? getCoachProfileByPersonId(request.getCoachId()) : null;
+        List<PlayerProfile> playerProfiles = getPlayerProfilesByPersonId(request.playerIds());
+        CoachProfile coachProfile = request.coachId() != null ? getCoachProfileByPersonId(request.coachId()) : null;
         
         String colorCode = configurationRepository.findValueByKey(AppConfiguration.ConfigurationKey.MATCH_DEFAULT_COLOR_CODE).orElse(null);
         
-        Reservation reservation = new Reservation(court, request.getStart(), end, request.getType(), 
-                                                 request.getDescription(), playerProfiles, coachProfile, colorCode);
+        Reservation reservation = new Reservation(court, request.start(), end, request.type(), 
+                                                 request.description(), playerProfiles, coachProfile, colorCode);
         
         Reservation saved = reservationRepository.save(reservation);
         return mapToResponseDTO(saved);
@@ -85,7 +85,7 @@ public class ReservationService {
     }
 
     private void validateBasicReservationData(Long courtId, CreateReservationRequestDTO request) {
-        if (request.getDurationMinutes() <= 0) {
+        if (request.durationMinutes() <= 0) {
             throw new ValidationException("Duration must be positive minutes");
         }
         
@@ -95,24 +95,24 @@ public class ReservationService {
     }
 
     private void validateMatchRules(CreateReservationRequestDTO request) {
-        boolean hasPlayers = request.getPlayerIds() != null && !request.getPlayerIds().isEmpty();
-        boolean hasDescription = request.getDescription() != null && !request.getDescription().trim().isEmpty();
+        boolean hasPlayers = request.playerIds() != null && !request.playerIds().isEmpty();
+        boolean hasDescription = request.description() != null && !request.description().trim().isEmpty();
         
         if (!hasPlayers && !hasDescription) {
             throw new ValidationException("For matches: either players or description is required");
         }
         
-        if (request.getCoachId() != null) {
+        if (request.coachId() != null) {
             throw new ValidationException("For matches: coach must be null");
         }
     }
 
     private void validateLessonRules(CreateReservationRequestDTO request) {
-        if (request.getCoachId() == null) {
+        if (request.coachId() == null) {
             throw new ValidationException("For lessons: coach is required");
         }
         
-        if (request.getPlayerIds() == null || request.getPlayerIds().isEmpty()) {
+        if (request.playerIds() == null || request.playerIds().isEmpty()) {
             throw new ValidationException("For lessons: at least one player is required");
         }
     }

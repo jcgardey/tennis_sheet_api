@@ -54,10 +54,10 @@ class PersonServiceTest {
 
         PersonDTO result = personService.createPerson(request);
 
-        assertThat(result.getId()).isEqualTo(1L);
-        assertThat(result.getName()).isEqualTo("John Doe");
-        assertThat(result.getEmail()).isEqualTo("john@example.com");
-        assertThat(result.getPhone()).isEqualTo("+1234567890");
+        assertThat(result.id()).isEqualTo(1L);
+        assertThat(result.name()).isEqualTo("John Doe");
+        assertThat(result.email()).isEqualTo("john@example.com");
+        assertThat(result.phone()).isEqualTo("+1234567890");
         verify(personRepository).save(any(Person.class));
     }
 
@@ -79,8 +79,8 @@ class PersonServiceTest {
 
         PersonDTO result = personService.getPersonById(1L);
 
-        assertThat(result.getId()).isEqualTo(1L);
-        assertThat(result.getName()).isEqualTo("John Doe");
+        assertThat(result.id()).isEqualTo(1L);
+        assertThat(result.name()).isEqualTo("John Doe");
         verify(personRepository).findById(1L);
     }
 
@@ -104,12 +104,12 @@ class PersonServiceTest {
 
         List<PersonDTO> result = personService.getAllPersonsByProfileAndName(ProfileType.PLAYER, "John");
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getName()).isEqualTo("John Doe");
+        assertThat(result.get(0).name()).isEqualTo("John Doe");
         verify(personRepository).findAllPlayersByName("John");
         
         List<PersonDTO> resultCoaches = personService.getAllPersonsByProfileAndName(ProfileType.COACH, "Teddy");
         assertThat(resultCoaches).hasSize(1);
-        assertThat(resultCoaches.get(0).getName()).isEqualTo("Teddy Coach");
+        assertThat(resultCoaches.get(0).name()).isEqualTo("Teddy Coach");
         verify(personRepository).findAllCoachesByName("Teddy");
     }
 

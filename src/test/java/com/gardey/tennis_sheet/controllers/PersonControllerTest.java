@@ -60,7 +60,7 @@ class PersonControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Email already exists: " + request.getEmail()));
+                .andExpect(jsonPath("$.message").value("Email already exists: " + request.email()));
     }
 
     @Test

@@ -27,15 +27,15 @@ public class PersonService {
 
     @Transactional
     public PersonDTO createPerson(CreatePersonRequestDTO request) {
-        Person existingPerson = personRepository.findByEmailIgnoreCase(request.getEmail())
+        Person existingPerson = personRepository.findByEmailIgnoreCase(request.email())
                 .orElse(null);
         if (existingPerson != null) {
-            throw new PersonEmailAlreadyExistsException(request.getEmail());
+            throw new PersonEmailAlreadyExistsException(request.email());
         }
-        Person person = new Person(request.getName(), request.getEmail(), request.getPhone());
+        Person person = new Person(request.name(), request.email(), request.phone());
         person.setPlayerProfile(new PlayerProfile(person));
         if (request.isCoach()) {
-            person.setCoachProfile(new CoachProfile(person, request.getColorCode(), request.getHourlyRate()));
+            person.setCoachProfile(new CoachProfile(person, request.colorCode(), request.hourlyRate()));
         }
         Person saved = personRepository.save(person);
         return mapToResponseDTO(saved);
